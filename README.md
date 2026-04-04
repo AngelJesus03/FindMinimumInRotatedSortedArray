@@ -329,3 +329,9 @@ Tamaño      Lineal O(n)       Sort O(nlogn)         Binaria O(logn)
 ```
 
 Si no aparece ningún mensaje de error de AddressSanitizer o UndefinedBehaviorSanitizer, la ejecución es limpia.
+Grupo 10
+Angel Jesus Navarro Ruiz
+Cristhyan Perez Villegas
+
+
+
