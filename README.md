@@ -396,26 +396,43 @@ Arreglo original: [10, 11, 12, 13, 14, 15]
 
 ### Correr los tests
 
-Con CTest (recomendado):
+Con CTest:
 
 ```bash
-ctest --test-dir build
+ctest --verbose
 ```
 
 Directamente:
 
 ```bash
-./build/ejecutable_tests
+./build/executable_test
 ```
 
 Salida esperada si todos los casos pasan:
 
-```
-Caso normal pasó
-Caso pequeño pasó
+```bash
+Ejecutando tests con la función 'EncontrarMin'
+
+Caso normal 1 pasó
+Caso normal 2 pasó
+Caso pequeño 1 pasó
+Caso pequeño 2 pasó
 Caso borde 1 pasó
 Caso borde 2 pasó
-Caso propuesto pasó
+Caso propuesto 1 pasó
+Caso propuesto 2 pasó
+
+Ejecutando tests con la función 'EncontrarMinIngenua'
+
+Caso normal 1 pasó
+Caso normal 2 pasó
+Caso pequeño 1 pasó
+Caso pequeño 2 pasó
+Caso borde 1 pasó
+Caso borde 2 pasó
+Caso propuesto 1 pasó
+Caso propuesto 2 pasó
+
 Todos los test pasaron
 ```
 
