@@ -535,6 +535,8 @@ Para n = 1,000,000, comparando las dos estrategias de mejora:
 | Mejor algoritmo | Lineal `-O0` → Binaria `-O0` | ~20,000× | O(n) → O(log n) |
  
 La elección del algoritmo correcto (búsqueda binaria vs lineal) tiene un impacto de **cuatro órdenes de magnitud** más que la mejor optimización del compilador. Cambiar de `-O0` a `-O3` mejora ~3×; cambiar de búsqueda lineal a búsqueda binaria mejora ~20,000×. Esta diferencia solo se amplifica conforme n crece.
- 
----
 
+## Copilot
+Copilot nos sugirió que para un proyecto más escalable, los elementos del array no se pueden limitar a ser solo enteros, es por ello que nos dio la idea de implementar Genéricos y así el algoritmo pueda llegar a ser más versátil.
+
+Para la parte de la solución intuitiva Copilot nos mostró una función que recorría todo el vector sin embargo la modificamos para que se detenga en la primera comparación exitosa, de esta forma evita seguir sin necesidad.
