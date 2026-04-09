@@ -80,16 +80,17 @@ Construyan una tabla con cuatro columnas:
 
 | archivo | salida u observable importante | idea algorítmica | argumento de costo |
 |---|---|---|---|
-| `demo_bubblesort.cpp` | Muestra el arreglo antes y después, con conteo de comparaciones, intercambios y posición del último swap. | Bubble Sort optimizado: compara vecinos e intercambia si están en desorden, recortando la siguiente pasada al índice del último intercambio. | Peor caso cuadrático, pero la optimización evita revisar el sufijo ya ordenado y puede terminar antes. |
-| `demo_power.cpp` | Compara resultados de versiones brutas (`BF`) y optimizadas de potenciación para la misma entrada. | Exponenciación binaria: en vez de multiplicar `n` veces, aprovecha los bits del exponente elevando al cuadrado sucesivamente. | Las versiones `BF` son `O(n)`; las optimizadas reducen iteraciones/llamadas a `O(log n)` desplazando el exponente a la derecha. |
-| `demo_fibonacci.cpp` | Muestra que `fibI`, `fib` y `fib(n, prev)` producen el mismo resultado, más los primeros 8 términos desde la clase `Fib`. | Tres estrategias para el mismo problema: iterativa, recursiva ingenua y recursiva con arrastre del término anterior. | `fibI` y `fib(n, prev)` son lineales; `fib(n)` recursiva es exponencial por recomputación de subproblemas. |
-| `demo_countones.cpp` | Imprime `x`, su representación binaria y el conteo de bits en 1 con ambos métodos. | `countOnes1` elimina el bit menos significativo en 1 con `n &= (n-1)`; `countOnes2` agrupa y suma bits por bloques. | `countOnes1` cuesta proporcional al número de bits en 1; `countOnes2` hace rondas fijas, así que es `O(1)` para tipos de tamaño fijo. |
+| `demo_bubblesort.cpp` | Muestra el arreglo antes y después, con conteo de comparaciones, intercambios y posición del último swap. Entonces, la salida clave es el struct 'BubbleStats'| Bubble Sort optimizado: compara vecinos e intercambia si están en desorden, recortando la siguiente pasada al índice del último intercambio. | Peor caso cuadrático, pero la optimización evita revisar el sufijo ya ordenado y puede terminar antes. |
+| `demo_power.cpp` | Compara resultados de versiones brutas (`BF`) y optimizadas de potenciación para la misma entrada. | Exponenciación binaria: en vez de multiplicar `n` veces, aprovecha los bits del exponente elevando al cuadrado sucesivamente. | Las versiones `BF` son `O(n)`; las optimizadas reducen iteraciones a `O(log n)` desplazando el exponente a la derecha. |
+| `demo_fibonacci.cpp` | Muestra que `fibI`, `fib` y `fib(n, prev)` producen el mismo resultado, más los primeros 8 términos desde la clase `Fib`. | Tres estrategias para el mismo problema, iterativa, recursiva ingenua y recursiva con arrastre del término anterior. | `fibI` y `fib(n, prev)` son lineales; `fib(n)` recursiva es exponencial por recomputación de subproblemas. |
+| `demo_countones.cpp` | Imprime `x`, su representación binaria y el conteo de bits en 1 con ambos métodos. | `countOnes1` elimina el bit menos significativo en 1 con `n &= (n-1)`; `countOnes2` agrupa y suma bits por bloques. | `countOnes1` cuesta proporcional al número de bits en 1; `countOnes2` hace rondas fijas, así que es `O(w)` para tipos de tamaño fijo. |
 
 Luego respondan:
 
 1. En `demo_bubblesort.cpp`, ¿qué salida sirve para defender costo y no solo resultado?
 
-La salida que sirve para defender costo y no solo resultado es la que imprime las estadísticas: comparaciones, intercambios, ultimo swap; porque esas cantidades muestran cuánto trabajo hizo realmente el algoritmo. Ver solo el arreglo final ordenado prueba el resultado, pero no dice nada sobre el esfuerzo que tomó llegar allí. 
+La salida que sirve para defender costo y no solo resultado es el struct "BubbleStats", que registra "comparisons", "swaps" y "lastSwapIndex".
+El arreglo ordenado al final solo demuestra que el algoritmo es correcto, pero no dice nada sobre cuánto trabajo costó llegar ahí. En cambio, "BubbleStats" permite cuantificar el costo real, responde a cuántas comparaciones y cuántos intercambios se hicieron, que son las operaciones elementales del algoritmo. Esto es lo que hace posible comparar "bubbleSortBasic" contra "bubbleSortOptimized" de forma concreta. Ambas producen el mismo arreglo ordenado, pero la versión optimizada, al usar "lastSwapIndex" para reducir el rango de la siguiente pasada y al detenerse temprano si no hubo cambios, puede reportar menos comparaciones y swaps en BubbleStats. Sin esos contadores, ambas versiones serían indistinguibles ya que tienen mismo input, mismo output. Es "BubbleStats" lo que permite defender que una es más eficiente que la otra.
 
 2. En `demo_power.cpp`, ¿qué comparación concreta muestra una mejora algorítmica?
 
@@ -102,13 +103,11 @@ Por ejemplo, para calcular a^16, powerBF hace 16 multiplicaciones, mientras que 
 La mejora se vuelve visible cuando el exponente crece: para exp = 1000, powerBF haría 1000 multiplicaciones y power solo alrededor de 10.
 
 3. En `demo_fibonacci.cpp`, ¿qué crecimiento se vuelve defendible?
-El crecimiento que se vuelve defendible es el lineal O(n), tanto en fibI como en fib(n, prev).
 
-fib(n) recursiva recalcula los mismos subproblemas repetidamente: fib(10) llama a fib(9) y fib(8), cada uno de los cuales vuelve a llamar a fib(8) y fib(7), etc. El árbol de llamadas crece exponencialmente → O(2ⁿ).
-fib(n, prev) evita eso arrastrando el término anterior como parámetro, convirtiendo la recursión en una cadena lineal sin recomputación → O(n).
-fibI hace exactamente lo mismo pero de forma iterativa, también O(n).
-
-Las tres funciones imprimen 55 para n = 10, pero solo fibI y fib(n, prev) escalan bien al aumentar n.
+El crecimiento que se vuelve defendible es el lineal O(n), presente en fibI y fib(n, prev).
+La versión recursiva ingenua fib(n) tiene crecimiento exponencial O(2ⁿ) porque recalcula los mismos subproblemas repetidamente y aqui cada llamada genera dos llamadas más, formando un árbol de recursión que crece exponencialmente.
+En cambio, "fibI" resuelve el mismo problema en O(n) con un bucle que mantiene solo dos variables (f y g), avanzando linealmente sin recalcular nada. La versión fib(n, prev) logra lo mismo recursivamente ya que al devolver el valor anterior a través del parámetro por referencia prev, cada nivel de recursión hace una sola llamada recursiva en vez de dos, resultando en una cadena lineal de n llamadas.
+El salto de O(2ⁿ) a O(n) es lo que hace defendible a estas dos versiones. Para n = 50, fib(n) generaría más de 10¹⁴ llamadas, mientras que fibI y fib(n, prev) solo necesitan 50 iteraciones.
 
 4. En `demo_countones.cpp`, ¿qué ejemplo ayuda más a distinguir valor numérico de tamaño en bits?
 
@@ -227,13 +226,14 @@ La respuesta debe incluir obligatoriamente:
 * una afirmación de representación o memoria,
 * una advertencia metodológica.
 
-Lo que cambia es el tipo de pregunta que uno está respondiendo. En Semana1 la pregunta era "¿esto funciona bien?"; en el Bloque 5 la pregunta pasa a ser "¿esto funciona mejor que la alternativa, y bajo qué condiciones?". Eso exige un marco distinto.
+Lo que cambia es el tipo de pregunta que uno está respondiendo. En Semana 1 la pregunta era "¿esto funciona bien?"; ahora la pregunta pasa a ser "¿esto funciona mejor que la alternativa, y bajo qué condiciones?". Eso exige un marco distinto.
 
-Afirmación de especificación. Antes de comparar dos implementaciones hay que fijar qué problema resuelven exactamente: nth_element y sort no son intercambiables porque sus contratos son distintos — nth_element solo garantiza que el k-ésimo elemento quede en su posición correcta, no que el resto esté ordenado. Comparar tiempos sin verificar que ambas versiones cumplen la misma especificación es comparar cosas distintas.
+Antes de comparar dos implementaciones hay que fijar qué problema resuelven exactamente. Por ejemplo, 'nth_element' y 'sort' no son intercambiables porque sus contratos son distintos. 'nth_element' solo garantiza que el k-ésimo elemento quede en su posición correcta, no que el resto esté ordenado. Comparar tiempos sin verificar que ambas versiones cumplen la misma especificación es comparar cosas distintas.
 
-Afirmación de correctitud. La evidencia experimental no puede reemplazar al argumento de correctitud: que power(3, 5) devuelva 243 en cinco corridas no prueba que power sea correcta para todo n, solo que no falló en ese caso. La correctitud sigue siendo una propiedad que se defiende con razonamiento sobre el algoritmo, no con observaciones empíricas.
+Sin embargo, incluso cuando la especificación coincide, la evidencia experimental no puede reemplazar al argumento de correctitud. Que 'power(3, 5)' devuelva 243 en cinco corridas no prueba que power sea correcta para todo n, solo que no falló en ese caso. La correctitud sigue siendo una propiedad que se defiende con razonamiento sobre el algoritmo, no con observaciones empíricas.
 
-Afirmación de costo. El costo observable en un benchmark es una instancia del costo teórico, no su prueba. Que lower_bound sea más rápido que búsqueda lineal para n = 250000 es consistente con la diferencia entre O(log n) y O(n), pero el argumento de costo se sostiene con el análisis de complejidad, no con el número en pantalla. Los tiempos solo hacen visible lo que el análisis ya predice.
-Afirmación de representación o memoria. Cuando bench_cache_effects.cpp muestra que std::list es más lento que vector incluso en recorrido secuencial, lo que se revela no es una diferencia algorítmica sino una diferencia de representación en memoria: los nodos dispersos en el heap rompen la localidad que el caché necesita. Defender una implementación requiere entonces no solo hablar del algoritmo sino de cómo los datos viven en memoria.
+En cuanto al costo, el tiempo observable en un benchmark es una instancia del costo teórico, no su prueba. Que 'lower_bound' sea más rápido que búsqueda lineal para n = 250000 es consistente con la diferencia entre O(log n) y O(n), pero el argumento de costo se sostiene con el análisis de complejidad, no con el número en pantalla. Los tiempos solo hacen visible lo que el análisis ya predice.
 
-Advertencia metodológica. Los benchmarks mienten si no se controlan las variables. El mismo experimento ejecutado con distintos niveles de optimización del compilador, distinto tamaño de entrada o sin repeticiones suficientes puede invertir el resultado. Ejercicios0.md lo resume bien: hay que mantener constantes el input, la máquina, el compilador y el número de repeticiones, y aun así interpretar los tiempos con cuidado, porque medir mal también engaña.
+Ahora bien, el análisis de complejidad tampoco cuenta toda la historia. Cuando 'bench_cache_effects.cpp' muestra que 'std::list' es más lento que vector incluso en recorrido secuencial, lo que se revela no es una diferencia algorítmica sino una diferencia de representación en memoria. Los nodos dispersos en el heap rompen la localidad que el caché necesita. Defender una implementación requiere entonces no solo hablar del algoritmo sino de cómo los datos viven en memoria.
+
+Finalmente, todo lo anterior pierde valor si la medición no es rigurosa. Los benchmarks mienten si no se controlan las variables. El mismo experimento ejecutado con distintos niveles de optimización del compilador, distinto tamaño de entrada o sin repeticiones suficientes puede invertir el resultado. Hay que mantener constantes el input, la máquina, el compilador y el número de repeticiones, y aun así interpretar los tiempos con cuidado, porque medir mal también engaña.
