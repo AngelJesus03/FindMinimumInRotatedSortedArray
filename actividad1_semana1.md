@@ -166,7 +166,8 @@ El demo muestra tres comportamientos distintos sobre el mismo original = {1, 2, 
 
 2. En `bench_vector_growth.cpp`, ¿qué cambia con `reserve`?
 
-reserve(n) elimina todas las realocaciones: sin él, el vector crece duplicando capacidad cada vez que se llena, lo que implica copiar todos los elementos a un nuevo bloque de memoria varias veces durante los 300,000 push_back. Con reserve, la memoria se pide una sola vez al inicio y cada push_back solo escribe en el slot siguiente, sin mover nada. El benchmark lo hace visible midiendo el tiempo promedio de ambas versiones: la diferencia refleja exactamente el costo acumulado de esas realocaciones.
+Al llamar reserve(n), el vector pre asigna memoria contigua para n elementos de una sola vez antes del bucle. Sin reserve, cada vez que el vector agota su capacidad interna durante push_back, debe reasignar un bloque más grande y copiar todos los elementos existentes al nuevo bloque, lo cual ocurre O(log n) veces con un costo acumulado significativo.
+Con reserve, se elimina por completo esas reasignaciones y copias intermedias, dado que el vector ya tiene espacio suficiente desde el inicio, así que los 300,000 push_back simplemente escriben en memoria ya asignada. El resultado es menos tiempo de ejecución y menor fragmentación de memoria, lo cual se refleja directamente en los tiempos promedio que mide el benchmark.
 
 3. En `bench_vector_ops.cpp`, ¿por qué `push_back`, `insert(begin())` e `insert(middle)` no cuestan lo mismo?
 
@@ -193,7 +194,7 @@ Ejercicios0.md establece un orden de cuatro pasos. Primero elegir bien el algori
 
 2. ¿Qué quiere mostrar `stl_optimizacion_demostracion.cpp` con `reserve`, `nth_element`, `partial_sort` y `lower_bound`?
 
-El archivo demuestra que elegir el algoritmo correcto de la STL importa más que el nivel de optimización del compilador. reserve elimina realocaciones evitables en push_back, bajando la constante oculta del costo amortizado. nth_element obtiene la mediana o el k-ésimo elemento en O(n) promedio, evitando el O(n log n) de un sort completo innecesario. partial_sort ordena solo los primeros K elementos para obtener un Top-K, también más barato que ordenar todo. lower_bound convierte una búsqueda lineal O(n) en una búsqueda binaria O(log n) sobre un vector ya ordenado. Cada sección imprime una tabla comparativa de tiempos para que la diferencia sea observable directamente.
+El archivo demuestra que elegir el algoritmo correcto de la STL importa más que el nivel de optimización del compilador. 'reserve' elimina realocaciones evitables en push_back, bajando la constante oculta del costo amortizado. nth_element obtiene la mediana o el k-ésimo elemento en O(n) promedio, evitando el O(n log n) de un sort completo innecesario. partial_sort ordena solo los primeros K elementos para obtener un Top-K, también más barato que ordenar todo. lower_bound convierte una búsqueda lineal O(n) en una búsqueda binaria O(log n) sobre un vector ya ordenado. Cada sección imprime una tabla comparativa de tiempos para que la diferencia sea observable directamente.
 
 3. ¿Qué tipo de evidencia puede producir `resolver_ejercicios0_v4.2.sh`?
 
