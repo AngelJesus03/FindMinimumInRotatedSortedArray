@@ -89,7 +89,8 @@ Luego respondan:
 
 1. En `demo_bubblesort.cpp`, ¿qué salida sirve para defender costo y no solo resultado?
 
-La salida que sirve para defender costo y no solo resultado es la que imprime las estadísticas: comparaciones, intercambios, ultimo swap; porque esas cantidades muestran cuánto trabajo hizo realmente el algoritmo. Ver solo el arreglo final ordenado prueba el resultado, pero no dice nada sobre el esfuerzo que tomó llegar allí. 
+La salida que sirve para defender costo y no solo resultado es el struct "BubbleStats", que registra "comparisons", "swaps" y "lastSwapIndex".
+El arreglo ordenado al final solo demuestra que el algoritmo es correcto, pero no dice nada sobre cuánto trabajo costó llegar ahí. En cambio, "BubbleStats" permite cuantificar el costo real, responde a cuántas comparaciones y cuántos intercambios se hicieron, que son las operaciones elementales del algoritmo. Esto es lo que hace posible comparar "bubbleSortBasic" contra "bubbleSortOptimized" de forma concreta. Ambas producen el mismo arreglo ordenado, pero la versión optimizada, al usar "lastSwapIndex" para reducir el rango de la siguiente pasada y al detenerse temprano si no hubo cambios, puede reportar menos comparaciones y swaps en BubbleStats. Sin esos contadores, ambas versiones serían indistinguibles ya que tienen mismo input, mismo output. Es "BubbleStats" lo que permite defender que una es más eficiente que la otra.
 
 2. En `demo_power.cpp`, ¿qué comparación concreta muestra una mejora algorítmica?
 
@@ -102,13 +103,11 @@ Por ejemplo, para calcular a^16, powerBF hace 16 multiplicaciones, mientras que 
 La mejora se vuelve visible cuando el exponente crece: para exp = 1000, powerBF haría 1000 multiplicaciones y power solo alrededor de 10.
 
 3. En `demo_fibonacci.cpp`, ¿qué crecimiento se vuelve defendible?
-El crecimiento que se vuelve defendible es el lineal O(n), tanto en fibI como en fib(n, prev).
 
-fib(n) recursiva recalcula los mismos subproblemas repetidamente: fib(10) llama a fib(9) y fib(8), cada uno de los cuales vuelve a llamar a fib(8) y fib(7), etc. El árbol de llamadas crece exponencialmente → O(2ⁿ).
-fib(n, prev) evita eso arrastrando el término anterior como parámetro, convirtiendo la recursión en una cadena lineal sin recomputación → O(n).
-fibI hace exactamente lo mismo pero de forma iterativa, también O(n).
-
-Las tres funciones imprimen 55 para n = 10, pero solo fibI y fib(n, prev) escalan bien al aumentar n.
+El crecimiento que se vuelve defendible es el lineal O(n), presente en fibI y fib(n, prev).
+La versión recursiva ingenua fib(n) tiene crecimiento exponencial O(2ⁿ) porque recalcula los mismos subproblemas repetidamente y aqui cada llamada genera dos llamadas más, formando un árbol de recursión que crece exponencialmente.
+En cambio, "fibI" resuelve el mismo problema en O(n) con un bucle que mantiene solo dos variables (f y g), avanzando linealmente sin recalcular nada. La versión fib(n, prev) logra lo mismo recursivamente ya que al devolver el valor anterior a través del parámetro por referencia prev, cada nivel de recursión hace una sola llamada recursiva en vez de dos, resultando en una cadena lineal de n llamadas.
+El salto de O(2ⁿ) a O(n) es lo que hace defendible a estas dos versiones. Para n = 50, fib(n) generaría más de 10¹⁴ llamadas, mientras que fibI y fib(n, prev) solo necesitan 50 iteraciones.
 
 4. En `demo_countones.cpp`, ¿qué ejemplo ayuda más a distinguir valor numérico de tamaño en bits?
 
