@@ -19,23 +19,31 @@ Respondan:
 
 1. Expliquen con sus palabras la diferencia entre **problema**, **algoritmo**, **ADT** e **implementación**.
 
-Un problema es lo que se quiere resolver (el objetivo), un algoritmo es el conjunto de pasos lógicos para resolver ese problema, un ADT (tipo de dato abstracto) define cómo se organizan los datos y qué operaciones se pueden hacer sin importar su implementación interna, y la implementación es el código concreto (por ejemplo en C++) que lleva a la práctica ese algoritmo y ese ADT.
+Un problema es lo que se quiere resolver (el objetivo),
+Un algoritmo es el conjunto de pasos lógicos para resolver ese problema,
+Un ADT describe qué hace la estructura y qué operaciones se pueden hacer sin importar su implementación interna,
+La implementación es el código concreto (C++) que lleva a la práctica ese algoritmo y ese ADT.
 
+Una analogía perfecta sería el construir una casa en donde:
+- Problema: Un lugar para vivir y protegerme de la lluvia y el frío.
+- Algoritmo: el plan paso a paso: primero los cimientos, luego las paredes, luego el techo, luego las instalaciones eléctricas, etc.
+- ADT: los planos arquitectónicos. Dicen que la casa tendrá puertas, ventanas y habitaciones, pero no dicen de qué material serán ni cómo exactamente se construirán
+- Implementaciónla construcción real. Aquí se decide si las paredes son de ladrillo o concreto. Es el "cómo" concreto.
+  
 2. En `bubble_sort.cpp`, expliquen qué observable conecta correctitud y costo.
 
-El observable que conecta correctitud y costo es el número de inversiones en el arreglo, ya que un arreglo es correcto (está ordenado) cuando no hay inversiones (A[i-1] ≤ A[i]), y el costo del algoritmo depende de cuántas existen, porque cada intercambio elimina al menos una inversión; por eso, mientras más desordenado esté el arreglo, más comparaciones y swaps se requieren.
+El numero de comparaciones es el observable que conecta correctitud y costo. El algoritmo sabe que el arreglo está correctamente ordenado cuando hace una pasada completa sin encontrar ningún swap, es decir, sin inversiones, lo que dispara el !changed y detiene el loop. Y ese mismo número de comparaciones define el costo: cuantas menos comparaciones se hagan, más eficiente es el algoritmo, que es exactamente lo que optimiza la versión mejorada usando lastSwapIndex para ignorar zonas donde ya no puede haber inversiones.
 
 3. En `power.cpp`, expliquen por qué `power` mejora la idea de una versión ingenua.
 
-Reduce significativamente el numero de multiplicaciones ya que permite buscar la solución utilizando exponiencia binaria, pasando de O(n) a O(log n).
+Power es más eficiente porque reduce el número de multiplicaciones de O(n) a O(logn) al dividir el exponente entre 2 en cada iteración.
+Un ejemplo sencillo sería 2^8, la versión ingenua podría ser 2x2x...x2 sin embargo, la versión power primero transforma (2^4)^2 luego 2^4 en (2^2)^2 y así sucesivamente reduciendo el problema, pasando de 8 multiplicaciones a 3. De esta forma se muestra por qué es más eficiente.
 
 4. En `fibonacci.cpp`, expliquen por qué una función puede ser correcta y aun así ser una mala elección práctica.
 
 En fibonacci.cpp se ve que una función puede ser correcta y, sin embargo, no ser la mejor opción en la práctica, porque correctitud y eficiencia no es mismo.
 
-Es una función correcta, para una entrada válida, devuelve el resultado esperado según la definición del problema. En este caso, calcular el término n de Fibonacci. Desde el punto de vista conceptual, esta función está bien planteada, porque si se le da un n adecuado, devuelve el Fibonacci correcto.
-
-El problema es que esta versión recursiva hace muchísimo trabajo repetido. Para calcular fib(n), llama a fib(n-1) y fib(n-2), pero dentro de esas llamadas se vuelven a recalcular los mismos valores muchas veces. Por ejemplo, para calcular fib(6):
+Desde el punto de vista conceptual, esta función está bien planteada, porque si se le da un n adecuado, devuelve el Fibonacci correcto. El problema es que esta versión recursiva hace muchísimo trabajo repetido. Para calcular fib(n), llama a fib(n-1) y fib(n-2), pero dentro de esas llamadas se vuelven a recalcular los mismos valores muchas veces. Por ejemplo, para calcular fib(6):
 
 fib(6) necesita fib(5) y fib(4)
 fib(5) necesita fib(4) y fib(3)
@@ -43,24 +51,22 @@ fib(4) vuelve a necesitar fib(3) y fib(2)
 
 Entonces, valores como fib(4), fib(3) o fib(2) se calculan repetidamente, aunque ya habían aparecido antes. Es decir, la función es correcta, pero desperdicia tiempo repitiendo subproblemas.
 
-Por eso, su costo temporal crece de manera exponencial, aproximadamente O(2 elevado a la n)
+Por eso, su costo temporal crece de manera exponencial, aproximadamente O(2^n)
 En valores pequeños puede funcionar bien, pero cuando n aumenta, el tiempo de ejecución se dispara y deja de ser razonable. En este caso, la solución puede ser matemáticamente válida, pero computacionalmente ineficiente.
 
 5. En `count_ones.cpp`, expliquen por qué el tamaño de entrada no siempre coincide con el valor numérico.
 
-En count_ones.cpp, el tamaño de entrada no siempre coincide con el valor numérico porque un número no se mide por cuánto vale en decimal, sino por cuánta información se necesita para representarlo, es decir, por su cantidad de bits. Por ejemplo, 1024 es un número grande, pero en binario se representa como 10000000000, por lo que solo ocupa 11 bits. Esto muestra que un valor numérico alto no necesariamente implica una entrada “grande” en el sentido computacional.
-
-En countOnes1, el número de iteraciones no depende directamente del valor decimal de n, sino de cuántos bits en 1 tiene su representación binaria, ya que en cada paso la operación n &= (n - 1) elimina un bit activado. Por eso, un número grande puede requerir pocas iteraciones si tiene pocos unos. En cambio, countOnes2 trabaja agrupando bits y realiza una cantidad fija de pasos, determinada por el tamaño del tipo unsigned int, no por el valor numérico de n.
-
-En este problema el costo del algoritmo está relacionado con la representación binaria de la entrada y no simplemente con su valor decimal.
+El tamaño de entrada es siempre fijo en 32 bits porque 'unsigned int' ocupa ese espacio en memoria sin importar nada más, mientras que el valor numérico depende de qué número estás representando. Por ejemplo, 361 ocupa los mismos 32 bits que 1 o que 4294967295, pero cada uno tiene un valor y una cantidad de unos completamente distinta. Son tres cosas independientes: el espacio que ocupa (tamaño), el número que representa (valor numérico) y cuántos bits en 1 tiene (lo que cuentan estas funciones).
 
 6. En `demo_adt_secuencia.cpp`, expliquen por qué la misma interfaz puede convivir con representaciones distintas.
 
-En demo_adt_secuencia.cpp, la misma interfaz puede convivir con representaciones distintas porque el ADT define qué operaciones ofrece una secuencia, pero no obliga a que esas operaciones se implementen de una sola manera. La interfaz "IntSequence" especifica operaciones como size, get, set, add y remove, y cualquier clase que las implemente correctamente puede representar el mismo ADT.
+La misma interfaz puede convivir con representaciones distintas porque se utiliza una clase abstracta (IntSequence) que define las operaciones del ADT sin especificar su implementación.
 
-Eso se ve en las clases FixedArraySequence y VectorSequence. Ambas representan una secuencia de enteros y permiten hacer las mismas operaciones desde el punto de vista del usuario, pero internamente usan estructuras diferentes. FixedArraySequence guarda los datos en un arreglo fijo con una capacidad máxima de 16 elementos y controla manualmente el número de elementos. En cambio, VectorSequence usa std::vector<int>, que maneja memoria dinámica y puede crecer automáticamente.
+Las clases FixedArraySequence y VectorSequence implementan esa misma interfaz, pero usan estructuras internas diferentes (un arreglo fijo y un std::vector, respectivamente).
 
-Aunque por dentro son diferentes, para el cliente ambas “se comportan” igual, porque respetan la misma interfaz. La ventaja de esto es que se puede cambiar la implementación interna sin cambiar la forma de usar el ADT. Así, una representación puede ser más simple, otra más flexible o más eficiente en ciertos casos, pero mientras mantengan la misma interfaz y la misma conducta observable, ambas siguen siendo válidas para el mismo tipo abstracto de datos.
+Gracias al uso de métodos virtual y al polimorfismo, el código cliente (como run_scenario) puede trabajar con objetos de tipo IntSequence sin conocer su representación interna. En tiempo de ejecución, se ejecuta la implementación correspondiente según el tipo real del objeto.
+
+(Porque la interfaz separa el “qué” del “cómo”, y gracias al polimorfismo (virtual), distintas implementaciones pueden usarse de forma transparente.)
 
 #### Bloque 2 - Demos y trazado guiado
 
@@ -129,8 +135,13 @@ Respondan:
 
 1. ¿Qué funciones o ideas están verificando las pruebas públicas?
 
-Las funciones que están verificando las pruebas públicas son resultados numericos correctos (power, sum) o si un arreglo queda ordenado (Ordenamiento bubbleSortOptimizided).
+Verifican que los algoritmos implementados (sumas, potencias, Fibonacci, ordenamiento, etc.) produzcan resultados correctos, incluyendo versiones iterativas y recursivas, y que cumplan el comportamiento esperado en distintos casos.
 
+Verifican: 
+- correctitud funcional
+- consistencia entre versiones iterativas y recursivas
+- casos básicos y algunos casos borde
+  
 2. ¿Qué sí demuestra una prueba pública?
 
 Un prueba pública demuestra que las funciones funcionan correctamente ante los casos probados. Es decir evidencia correctitud parcial al verificar comportamientos esperados en entradas definidas.
@@ -149,9 +160,9 @@ La complejidad temporal es una medida de cómo crece el número de operaciones d
 
 5. Usen la rúbrica para autoevaluarse en:
 
-   * comprensión conceptual:        En proceso
-   * sustentación de correctitud:   En proceso
-   * análisis de eficiencia:        En proceso
+   * comprensión conceptual:        Logrado
+   * sustentación de correctitud:   Logrado
+   * análisis de eficiencia:        Logrado
 
 #### Bloque 4 - Puente corto con Proyecto0
 
@@ -166,7 +177,7 @@ Respondan brevemente:
 
 1. ¿Qué diferencia observable deja `demo_const_refs.cpp` entre lectura, modificación y copia?
 
-El demo muestra tres comportamientos distintos sobre el mismo original = {1, 2, 3}. sum_readonly recibe una const& y solo lee: original queda intacto. append_in_place recibe una referencia mutable y modifica el vector directamente, por lo que original pasa a ser {1, 2, 3, 4}. appended_copy devuelve un nuevo vector con el 99 añadido, pero original no cambia. El observable clave es que después de las tres operaciones original sigue siendo {1, 2, 3, 4} y la copia es {1, 2, 3, 4, 99}, dejando claro que leer con const& no cuesta copia, modificar con & afecta al caller, y devolver por valor produce un objeto independiente.
+La diferencia observable es que lectura no altera el vector original en absoluto, solo consume su contenido para producir un valor derivado como la suma, dejándolo exactamente igual que antes. La modificación in-place en cambio sí transforma el vector directamente, sin crear nada nuevo, porque la función recibe una referencia no-const y opera sobre el objeto original. Finalmente, la copia representa un punto medio interesante: el original se mantiene intacto, pero la función genera y devuelve un objeto completamente nuevo con el elemento extra, por lo que al final del programa conviven dos vectores distintos con contenidos diferentes, lo que deja claro que trabajaron sobre datos independientes.
 
 2. En `bench_vector_growth.cpp`, ¿qué cambia con `reserve`?
 
@@ -175,7 +186,7 @@ Con reserve, se elimina por completo esas reasignaciones y copias intermedias, d
 
 3. En `bench_vector_ops.cpp`, ¿por qué `push_back`, `insert(begin())` e `insert(middle)` no cuestan lo mismo?
 
-push_back al final es O(1) amortizado porque simplemente escribe en la siguiente posición libre. insert(begin()) es O(n) en cada llamada porque antes de insertar debe desplazar todos los elementos existentes una posición hacia la derecha; hacerlo n veces da O(n²) total. insert(middle) también desplaza, pero solo la mitad del vector en cada llamada, así que su constante es menor que insert(begin()), aunque sigue siendo O(n²) en total. Los tres hacen el mismo trabajo observable (llenar el vector con 20,000 elementos), pero el costo de desplazamiento es lo que los separa en el benchmark.
+Los tres no cuestan lo mismo porque cada uno mueve una cantidad distinta de elementos en cada inserción: push_back simplemente coloca el elemento al final sin mover nada, siendo prácticamente instantáneo gracias al reserve; insert en el medio desplaza en promedio la mitad de los elementos existentes cada vez; e insert en begin() es el peor caso porque obliga a mover todos los elementos una posición hacia adelante en cada inserción, lo que hace que el costo total escale de forma cuadrática y el benchmark lo refleje directamente en los tiempos medidos.
 
 4. En `bench_cache_effects.cpp`, ¿qué intuición deja sobre localidad de memoria?
 
@@ -202,7 +213,14 @@ El archivo demuestra que elegir el algoritmo correcto de la STL importa más que
 
 3. ¿Qué tipo de evidencia puede producir `resolver_ejercicios0_v4.2.sh`?
 
-El script genera evidencia empírica y reproducible en forma de archivos dentro de ejercicios0_out/. Produce tablas comparativas de tiempo de ejecución y tamaño de binario para distintos niveles de optimización (experimento 1), salidas del demo STL con tiempos reales (experimento 2), resultados de LTO y PGO con y sin la técnica (experimentos 3 y 4), reportes de ASan, UBSan y TSan detectando errores concretos (experimento 5), porcentajes de cobertura de líneas y condiciones con gcov (experimentos 6 y 7), conteo de warnings por nivel de optimización (experimento 8), y el perfil de funciones calientes con gprof (experimento 9). Todo queda consolidado en reporte_ejercicios0.md.
+El script genera evidencia empírica. Produce tablas comparativas de tiempo de ejecución y tamaño de binario para distintos niveles de optimización 
+(experimento 1), salidas del demo STL con tiempos reales 
+(experimento 2), resultados de LTO y PGO con y sin la técnica 
+(experimentos 3 y 4), reportes de ASan, UBSan y TSan detectando errores concretos 
+(experimento 5), porcentajes de cobertura de líneas y condiciones con gcov 
+(experimentos 6 y 7), conteo de warnings por nivel de optimización 
+(experimento 8), y el perfil de funciones calientes con gprof 
+(experimento 9). Todo queda consolidado en reporte_ejercicios0.md.
 
 4. ¿Qué limitaciones de entorno menciona `INSTRUCCIONES_Ejercicios0_v4.2.md`?
 
